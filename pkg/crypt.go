@@ -1,6 +1,9 @@
 package goshc
 
-import "fmt"
+import (
+	"crypto/rand"
+	"fmt"
+)
 
 // Replace this with something later
 // Simple xor across the key
@@ -27,4 +30,11 @@ func ToGoString(data []byte) string {
 	}
 
 	return out
+}
+
+func GenerateKey() []byte {
+	token := make([]byte, 32)
+	rand.Read(token)
+
+	return token
 }

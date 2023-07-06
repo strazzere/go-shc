@@ -118,7 +118,7 @@ func buildLoaderTemplate(script string) (*os.File, error) {
 		return nil, err
 	}
 
-	key := []byte("DERPY")
+	key := goshc.GenerateKey()
 
 	goshc.Crypt(payloadBytes, key)
 
