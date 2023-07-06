@@ -145,20 +145,21 @@ func buildLoaderTemplate(script string) (*os.File, error) {
 		"		return" + "\n" +
 		"	}" + "\n" +
 		"" + "\n" +
-		"	file, err := goshc.MemOpen(payload)" + "\n" +
+		"	file, err := goshc.Open(payload)" + "\n" +
 		"	if err != nil {" + "\n" +
-		`		fmt.Printf("error %s", err)` + "\n" +
+		`		fmt.Printf("open error %s", err)` + "\n" +
 		"		return" + "\n" +
 		"	}" + "\n" +
 		"" + "\n" +
 		"	cmd, err := exec.Command(file.Name()).Output()" + "\n" +
 		"	if err != nil {" + "\n" +
-		`		fmt.Printf("error %s", err)` + "\n" +
+		`		fmt.Printf("execute error %s", err)` + "\n" +
 		"		return" + "\n" +
 		"	}" + "\n" +
 		"	output := string(cmd)" + "\n" +
 		"" + "\n" +
 		`	fmt.Printf("Output: \n<<<\n%v\n>>>", output)` + "\n" +
+		" goshc.Clean(file)" + "\n" +
 		"}"
 
 	_, err = output.Write([]byte(template))
