@@ -22,7 +22,7 @@ var (
 
 func main() {
 	flag.Usage = func() {
-		fmt.Fprint(os.Stderr, `Usage: goshc-gen SCRIPT
+		fmt.Fprint(os.Stderr, `Usage: go-shc SCRIPT
 
 Options:
 `)
