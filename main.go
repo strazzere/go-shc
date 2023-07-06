@@ -1,0 +1,1 @@
+cmd/goshc-gen/main.go
