@@ -2,20 +2,18 @@ package goshc
 
 import (
 	"crypto/rand"
+	"crypto/rc4"
 	"fmt"
 )
 
-// Replace this with something later
-// Simple xor across the key
 func Crypt(data, key []byte) error {
 
-	for index, char := range data {
-		modPosition := index
-		if index >= len(key) {
-			modPosition = index % len(key)
-		}
-		data[index] = char ^ key[modPosition]
+	cipher, err := rc4.NewCipher(key)
+	if err != nil {
+		return err
 	}
+
+	cipher.XORKeyStream(data, data)
 
 	return nil
 }
