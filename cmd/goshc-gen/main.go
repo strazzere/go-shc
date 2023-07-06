@@ -7,14 +7,17 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 
 	goshc "github.com/strazzere/go-shc/pkg"
 )
 
 var (
-	archFlag      string
-	osFlag        string
-	useGarbleFlag bool
+	archFlag        string
+	osFlag          string
+	useGarbleFlag   bool
+	directFlag      bool
+	interpreterFlag string
 )
 
 func main() {
@@ -33,6 +36,12 @@ Options:
 	)
 	flag.BoolVar(&useGarbleFlag, "garble", false,
 		"use garble instead of go to build the file, defaults to false",
+	)
+	flag.BoolVar(&directFlag, "direct", false,
+		"directly pipe the script to an interpreter (no file used), defaults to false",
+	)
+	flag.StringVar(&interpreterFlag, "interpreter", "sh",
+		"if `direct` was used, attempt to use this specific interpreter, defaults to sh with no direct path",
 	)
 	flag.Parse()
 	if flag.NArg() != 1 {
@@ -128,7 +137,6 @@ func buildLoaderTemplate(script string) (*os.File, error) {
 		"import (" + "\n" +
 		`	"fmt"` + "\n" +
 		"" + "\n" +
-		`	"os/exec"` + "\n" +
 		`	goshc "github.com/strazzere/go-shc/pkg"` + "\n" +
 		")" + "\n" +
 		"" + "\n" +
@@ -145,21 +153,10 @@ func buildLoaderTemplate(script string) (*os.File, error) {
 		"		return" + "\n" +
 		"	}" + "\n" +
 		"" + "\n" +
-		"	file, err := goshc.Open(payload)" + "\n" +
-		"	if err != nil {" + "\n" +
-		`		fmt.Printf("open error %s", err)` + "\n" +
-		"		return" + "\n" +
-		"	}" + "\n" +
-		"" + "\n" +
-		"	cmd, err := exec.Command(file.Name()).Output()" + "\n" +
+		`	err = goshc.Execute(payload, ` + strconv.FormatBool(directFlag) + `, "` + interpreterFlag + `")` + "\n" +
 		"	if err != nil {" + "\n" +
 		`		fmt.Printf("execute error %s", err)` + "\n" +
-		"		return" + "\n" +
 		"	}" + "\n" +
-		"	output := string(cmd)" + "\n" +
-		"" + "\n" +
-		`	fmt.Printf("Output: \n<<<\n%v\n>>>", output)` + "\n" +
-		" goshc.Clean(file)" + "\n" +
 		"}"
 
 	_, err = output.Write([]byte(template))
